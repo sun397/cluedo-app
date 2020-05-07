@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Welcome to Firebase Hosting</title>
+
+    <!-- update the version number as needed -->
+    <script defer src="/__/firebase/7.14.2/firebase-app.js"></script>
+    <!-- include only the Firebase features as you need -->
+    <script src="https://www.gstatic.com/firebasejs/4.1.3/firebase.js"></script>
+    <script defer src="/__/firebase/7.14.2/firebase-auth.js"></script>
+    <script defer src="/__/firebase/7.14.2/firebase-database.js"></script>
+    <script defer src="/__/firebase/7.14.2/firebase-messaging.js"></script>
+    <script defer src="/__/firebase/7.14.2/firebase-storage.js"></script>
+    <!-- <script src="https://www.gstatic.com/firebasejs/7.14.2/firebase-analytics.js"></script> -->
+
+    <!-- initialize the SDK after all desired features are loaded -->
+    <script defer src="/__/firebase/init.js"></script>
+    <!-- <script src="js/jquery.min.js"></script> -->
+      <script>
+        // Your web app's Firebase configuration
+        var firebaseConfig = {
+          apiKey: "AIzaSyCZsU1pifIkyD4OptvIRvQd9f0VS78-b_c",
+          authDomain: "oga-game.firebaseapp.com",
+          databaseURL: "https://oga-game.firebaseio.com",
+          projectId: "oga-game",
+          storageBucket: "oga-game.appspot.com",
+          messagingSenderId: "227402220476",
+          appId: "1:227402220476:web:691e5de3dca8bf8a4ee1b9",
+          measurementId: "G-WELVY8HRKV"
+        };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        firebase.analytics();
+      </script>
+      <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+      <script>
+        document.addEventListener('DOMContentLoaded', function() {
+          // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
+          // // The Firebase SDK is initialized and available here!
+          //
+          // firebase.auth().onAuthStateChanged(user => { });
+          // firebase.database().ref('/path/to/ref').on('value', snapshot => { });
+          // firebase.messaging().requestPermission().then(() => { });
+          // firebase.storage().ref('/path/to/ref').getDownloadURL().then(() => { });
+          //
+          // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
+
+          try {
+            let app = firebase.app();
+            let features = ['auth', 'database', 'messaging', 'storage'].filter(feature => typeof app[feature] === 'function');
+            document.getElementById('load').innerHTML = `Firebase SDK loaded with ${features.join(', ')}`;
+          } catch (e) {
+            console.error(e);
+            document.getElementById('load').innerHTML = 'Error loading the Firebase SDK, check the console.';
+          }
+        });
+      </script>
+      <link rel="stylesheet" href="/css/style.css">
+      <script src="/js/style.js"></script>
+      <script src="/js/mente.js"></script>
+  </head>
+  <body>
+
+    <header>
+      <div>
+        <label for="">id</label>
+        <select name="p-id" id="p-id">
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+        </select>
+        <br>
+        <label for="">名前</label>
+        <input type="text" id="user-name">
+        <button id="submit-go">参加</button>
+      </div>
+      <br>
+      <div>
+        ユーザー名
+        <div id="user-name-place">
+          <p>guest</p>
+        </div>
+      </div>
+    </header>
+
+    <section>
+      <div>
+        <h2>参加者</h2>
+        <div class="card-block">
+          1：<span id="p-1"></span>
+          <p><button class="p-select" data-pid="1">選択</button></p>
+        </div>
+        <div class="card-block">
+          2：<span id="p-2"></span>
+          <p><button class="p-select" data-pid="2">選択</button></p>
+        </div>
+        <div class="card-block">
+          3：<span id="p-3"></span>
+          <p><button class="p-select" data-pid="3">選択</button></p>
+        </div>
+        <div class="card-block">
+          4：<span id="p-4"></span>
+          <p><button class="p-select" data-pid="4">選択</button></p>
+        </div>
+      </div>
+    </section>
+
+    <br>
+    <br>
+    <br>
+
+    <div>
+      <h3>GAME START</h3>
+      <button id="start">start</button>
+    </div>
+
+    <br>
+
+    <div>
+      <h1>手札</h1>
+      <div id="hand-card">
+        <div class="card-block" id="person-card"></div>
+        <div class="card-block" id="item-card"></div>
+        <div class="card-block" id="place-card"></div>
+      </div>
+    </div>
+
+    <!-- <section>
+      <input type="text" id="idd">
+      <input type="text" id="items">
+      <button id="it">GO</button>
+    </section> -->
+
+    <br>
+    <br>
+    <br>
+
+    <div class="check-list">
+      <h1>リスト</h1>
+      <table border="1" id="check-list">
+        <tr id="person-list"></tr>
+
+        <tr id="person-list1"></tr>
+        <tr id="person-list2"></tr>
+        <tr id="person-list3"></tr>
+        <tr id="person-list4"></tr>
+
+        <tr id="item-list1"></tr>
+        <tr id="item-list2"></tr>
+        <tr id="item-list3"></tr>
+        <tr id="item-list4"></tr>
+
+        <tr id="place-list1"></tr>
+        <tr id="place-list2"></tr>
+        <tr id="place-list3"></tr>
+        <tr id="place-list4"></tr>
+      </table>
+    </div>
+
+    <br><br><br>
+
+    <div>
+      <h1>推理</h1>
+      <select name="person" id="person-reason"></select>
+      <select name="item" id="item-reason"></select>
+      <select name="place" id="place-reason"></select>
+      <button id="one-de" disabled>決定</button>
+
+      <h1>結果</h1>
+      <p id="result"></p>
+    </div>
+
+    <br><br><br>
+
+    <div>
+      <label for="">リセット</label>
+      <button id="reset">reset</button>
+    </div>
+
+    <br><br>
+
+    <main>
+      <h1>リアルタイムチャット</h1>
+        <div>
+          Name<br><input type="text" id="name">
+        </div>
+        <br>
+        <div>
+          Message<br><textarea id="message" row="10"></textarea><br>
+          <br>
+          <button id="send">send</button>
+        </div>
+        <hr>
+        <div id="output"></div>
+    </main>
+
+    <footer>
+      <div>
+        <p>Oga-Inc</p>
+      </div>
+    </footer>
+  </body>
+</html>

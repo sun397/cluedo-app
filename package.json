@@ -1,0 +1,22 @@
+{
+  "name": "cluedo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "@firebase/app": "^0.6.2",
+    "bitcore-lib-cash": "^8.19.0",
+    "firebase": "^7.14.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "deploy": "firebase deploy",
+        "deploy-rules": "firebase deploy --only firestore:rules,storage:rules",
+        "serve-hosting": "firebase serve --only hosting",
+        "serve-functions": "firebase serve --only functions"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
