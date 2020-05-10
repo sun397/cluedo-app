@@ -42,6 +42,7 @@ $(function() {
     $('#user-name-place').html('<p id="userId" data-userid="'+Number(id.value)+'">'+userName.value+'</p>');
     document.getElementById("submit-go").setAttribute('disabled', '');
     document.getElementById("one-de").removeAttribute('disabled');
+    $('#name').html('名前'+userName.value+'<input type="hidden" id="name" value="'+userName.value+'">');
     userName.value="";
   });
 
@@ -124,49 +125,45 @@ $(function() {
   });
 
   // 推理
+  var count = 0;
   $(document).on('click', '#one-de', function() {
-    var count = 0;
     var userId = document.getElementById('userId').getAttribute('data-userid');
     var i = Number(userId);
 
-    while (count < 3) {
+    while (count < 2) {
       if (i + 1 == 5) {
         i = 1;
       }
-
       if (i == userId) {
         i++;
         continue;
       }
-
       var personId = Number($('#person-reason option:selected').val());
-      database.ref(person).orderByChild("userId").on("value", function(data) {
+      database.ref(person).orderByChild("userId").equalTo(i).once("value", function(data) {
         data.forEach(function(childData) {
           v = childData.val();
-          if (v.userId == i && v.id == personId) {
-            $('#result').append('<p id="result-reason" class="done">'+v.userId+v.name+'</p>');
+          if (v.id == personId) {
+            $('#result').append('<p id="result-reason">プレイヤー'+v.userId+v.name+'</p>');
             return true;
           }
         });
       });
-
       var itemId = Number($('#item-reason option:selected').val());
-      database.ref(item).orderByChild("userId").on("value", function(data) {
+      database.ref(item).orderByChild("userId").equalTo(i).once("value", function(data) {
         data.forEach(function(childData) {
           v = childData.val();
-          if (v.userId == i && v.id == itemId) {
-            $('#result').append('<p id="result-reason">'+v.userId+v.name+'</p>');
+          if (v.id == itemId) {
+            $('#result').append('<p id="result-reason">プレイヤー'+v.userId+v.name+'</p>');
             return true;
           }
         });
       });
-
       var placeId = Number($('#place-reason option:selected').val());
-      database.ref(place).orderByChild("userId").on("value", function(data) {
+      database.ref(place).orderByChild("userId").equalTo(i).once("value", function(data) {
         data.forEach(function(childData) {
           v = childData.val();
-          if (v.userId == i && v.id == placeId) {
-            $('#result').html('<p id="result-reason">'+v.userId+v.name+'</p>');
+          if (v.id == placeId) {
+            $('#result').append('<p id="result-reason">プレイヤー'+v.userId+v.name+'</p>');
             return true;
           }
         });
@@ -174,39 +171,57 @@ $(function() {
       i++;
       count++;
     }
+    document.getElementById("one-de").setAttribute('disabled', '');
   });
-
   var target = document.getElementById('result');
-  function example() {
-    var count = target.childElementCount;
-    if (count==3) {
-      $('#result p').eq(2).remove();
+  let observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      // var count = target.childElementCount;
+      count = 2;
       $('#result p').eq(1).remove();
-    } else if (count==2) {
-      $('#result p').eq(1).remove();
-    }
-  }
-  var mo = new MutationObserver(example);
-  mo.observe(target, {childList: true});
-
-
-  // ユーザー選択
-  $('.p-select').on('click', function() {
-    var id = $(this).data('pid');
-    database.ref(user).orderByChild("id").equalTo(id).on("value", function(data) {
-      data.forEach(function(childData) {
-        database.ref(user).child(childData.key).update({completed: true});
-      })
+      console.log(mutation.target);
     });
   });
+  const config = {
+    childList: true,
+    characterData: true,
+    subtree: true
+  };
+  observer.observe(target, config);
 
-  // a
-  database.ref(user).on('child_changed', function(data) {
-    let changeId = '';
-    database.ref(user).orderByChild("completed").equalTo(true).on("value", function(data) {
+  // ターン終了
+  $(document).on('click', '#turn-end', function() {
+    var userId = document.getElementById('userId').getAttribute('data-userid');
+    var nextUser = userId++;
+    if (userId == 4) {
+      userId = 1;
+    }
+    database.ref(user).once("value", function(data) {
       data.forEach(function(childData) {
-        changeId = childData.id;
-      })
+        v = childData.val();
+        if (v.id == userId) {
+          database.ref(user).child(childData.key).update({completed: true});
+        } else if (v.id == nextUser) {
+          database.ref(user).child(childData.key).update({completed: false});
+        }
+      });
+    });
+    document.getElementById("turn-end").setAttribute('disabled', '');
+  });
+
+  // 自分のターンチェック
+  database.ref(user).on("child_changed", function() {
+    var authId = document.getElementById('userId').getAttribute('data-userid');
+    database.ref(user).once("value", function(data) {
+      data.forEach(function(childData) {
+        v = childData.val();
+        if (v.id == authId && v.completed == true) {
+          document.getElementById("one-de").removeAttribute('disabled');
+          return true;
+        } else {
+          document.getElementById("one-de").setAttribute('disabled', '');
+        }
+      });
     });
   });
 
@@ -215,17 +230,17 @@ $(function() {
     database.ref(item).on("value", function(data) {
       data.forEach(function(childData) {
         database.ref(item).child(childData.key).update({completed: true, userId: 0});
-      })
+      });
     });
     database.ref(person).on("value", function(data) {
       data.forEach(function(childData) {
         database.ref(person).child(childData.key).update({completed: true, userId: 0});
-      })
+      });
     });
     database.ref(place).on("value", function(data) {
       data.forEach(function(childData) {
         database.ref(place).child(childData.key).update({completed: true, userId: 0});
-      })
+      });
     });
     database.ref(user).remove();
   });
