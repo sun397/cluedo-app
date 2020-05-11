@@ -215,11 +215,19 @@ $(function() {
     database.ref(user).once("value", function(data) {
       data.forEach(function(childData) {
         v = childData.val();
+        if (v.completed == true) {
+          $('#p-'+v.id).addClass('color');
+        } else {
+          console.log(v);
+          $('#p-'+v.id).removeClass('color');
+        }
         if (v.id == authId && v.completed == true) {
           document.getElementById("one-de").removeAttribute('disabled');
+          document.getElementById("turn-end").removeAttribute('disabled');
           return true;
         } else {
           document.getElementById("one-de").setAttribute('disabled', '');
+          document.getElementById("turn-end").setAttribute('disabled', '');
         }
       });
     });
