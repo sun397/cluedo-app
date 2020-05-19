@@ -13,8 +13,18 @@
 - DB
   - firebase realtime database
 
+# 開発環境
+
+- バックエンド
+  - JavaScript
+
+- フロント
+ - HTML
+
 ## アプリ概要
 
 - Cluedoというゲームをfirebaseで作成してみた
 - アプリケーション
+-
+-
 
