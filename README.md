@@ -12,14 +12,19 @@
 
 - DB
   - firebase realtime database
+  - RDS
 
 # 開発環境
 
 - バックエンド
   - JavaScript
+  - PHP(予定)
 
 - フロント
  - HTML
+ - CSS
+ - SCSS
+ - JavaScript
 
 ## アプリ概要
 
