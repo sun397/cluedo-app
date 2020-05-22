@@ -127,10 +127,10 @@ $(function() {
   // 推理
   var count = 0;
   $(document).on('click', '#one-de', function() {
+    $('#result').html('');
     var userId = document.getElementById('userId').getAttribute('data-userid');
     var i = Number(userId);
     count = 0;
-    console.log(count, 1);
 
     while (count < 2) {
       if (i + 1 == 5) {
