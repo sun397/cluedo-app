@@ -8,10 +8,9 @@ $(function() {
 
   // チェックリスト表示
   var radio = '<td><input type="radio"></td><td><input type="radio"></td><td><input type="radio"></td><td><input type="radio"></td>';
-  var personList = ['スライム', 'トルネコ', 'エスターク', 'メタルキング'];
+  var personList = ['スライム', 'ヒト', 'エスターク', 'メタルキング'];
   var itemList = ['剣', '斧', '弓', '棒'];
-  var placeList = ['山', '川', '家', '地獄'];
-
+  var placeList = ['富士山', '隅田川', '渋谷', '地獄'];
   database.ref(user).on("value", function(data) {
     let list = '';
     data.forEach(function(childData) {
@@ -28,7 +27,7 @@ $(function() {
     $('#place-reason').append('<option value="'+i+'" name="place">'+placeList[i-1]+'</option>');
   };
 
-  // ユーザー参加
+  // ユーザー参加処理
   const id = document.getElementById("p-id");
   const userName = document.getElementById("user-name");
   $('#submit-go').on('click', function() {
@@ -42,12 +41,14 @@ $(function() {
     $('#user-name-place').html('<p id="userId" data-userid="'+Number(id.value)+'">'+userName.value+'</p>');
     document.getElementById("submit-go").setAttribute('disabled', '');
     document.getElementById("one-de").removeAttribute('disabled');
-    $('#name').html('名前'+userName.value+'<input type="hidden" id="name" value="'+userName.value+'">');
+    $('#name').html(userName.value+'<input type="hidden" id="name" value="'+userName.value+'">');
     userName.value="";
   });
 
-  // 参加ユーザーリスト
+  // 参加ユーザーリスト表示
+  var userCount = 0;
   database.ref(user).on("child_added", function(data) {
+    userCount++;
     const v = data.val();
     $('#p-'+v.id).html('<span>'+v.name+'</span>');
     database.ref(user).on("value", function(data) {
@@ -57,9 +58,10 @@ $(function() {
         }
       });
     });
+    console.log(userCount);
   });
 
-  // ゲーム開始時手札配布
+  // ゲーム開始時手札配布処理
   $(document).on('click', '#start', function() {
     var randamNum = Math.floor(Math.random() * ((4 + 1) - 1)) + 1;
     var count = 0;
@@ -124,7 +126,7 @@ $(function() {
     document.getElementById("start").setAttribute('disabled', '');
   });
 
-  // 推理
+  // 推理処理
   var count = 0;
   $(document).on('click', '#one-de', function() {
     $('#result').html('');
@@ -146,7 +148,6 @@ $(function() {
           v = childData.val();
           if (v.id == personId) {
             $('#result').append('<p id="result-reason">プレイヤー'+v.userId+v.name+'</p>');
-            console.log(v.name);
             return true;
           }
         });
@@ -192,7 +193,7 @@ $(function() {
   };
   observer.observe(target, config);
 
-  // ターン終了
+  // ターン終了処理
   $(document).on('click', '#turn-end', function() {
     var userId = document.getElementById('userId').getAttribute('data-userid');
     var nextUser = userId++;
@@ -212,7 +213,7 @@ $(function() {
     document.getElementById("turn-end").setAttribute('disabled', '');
   });
 
-  // 自分のターンチェック
+  // 自分のターンチェック処理
   database.ref(user).on("child_changed", function (data) {
     var v = data.val();
     var authId = document.getElementById('userId').getAttribute('data-userid');
