@@ -3,7 +3,7 @@
 - firebaseのREALTIME DATABASEを活用したアプリケーションです。
 
 ## firebase起動
-`$ npm run serve-hosting`
+`$ npm run serve-hosting `
 
 ## 環境設定
 
