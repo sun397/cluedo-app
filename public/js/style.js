@@ -129,6 +129,8 @@ $(function() {
   $(document).on('click', '#one-de', function() {
     var userId = document.getElementById('userId').getAttribute('data-userid');
     var i = Number(userId);
+    count = 0;
+    console.log(count, 1);
 
     while (count < 2) {
       if (i + 1 == 5) {
@@ -144,6 +146,7 @@ $(function() {
           v = childData.val();
           if (v.id == personId) {
             $('#result').append('<p id="result-reason">プレイヤー'+v.userId+v.name+'</p>');
+            console.log(v.name);
             return true;
           }
         });
@@ -177,9 +180,9 @@ $(function() {
   let observer = new MutationObserver((mutations) => {
     mutations.forEach((mutation) => {
       // var count = target.childElementCount;
+      console.log(mutation.target);
       count = 2;
       $('#result p').eq(1).remove();
-      console.log(mutation.target);
     });
   });
   const config = {
@@ -210,27 +213,22 @@ $(function() {
   });
 
   // 自分のターンチェック
-  database.ref(user).on("child_changed", function() {
+  database.ref(user).on("child_changed", function (data) {
+    var v = data.val();
     var authId = document.getElementById('userId').getAttribute('data-userid');
-    database.ref(user).once("value", function(data) {
-      data.forEach(function(childData) {
-        v = childData.val();
-        if (v.completed == true) {
-          $('#p-'+v.id).addClass('color');
-        } else {
-          console.log(v);
-          $('#p-'+v.id).removeClass('color');
-        }
-        if (v.id == authId && v.completed == true) {
-          document.getElementById("one-de").removeAttribute('disabled');
-          document.getElementById("turn-end").removeAttribute('disabled');
-          return true;
-        } else {
-          document.getElementById("one-de").setAttribute('disabled', '');
-          document.getElementById("turn-end").setAttribute('disabled', '');
-        }
-      });
-    });
+
+    if (v.completed == true) {
+      $('.is_color').removeClass('color');
+      $('#p-'+v.id).addClass('color');
+      document.getElementById("one-de").setAttribute('disabled', '');
+      document.getElementById("turn-end").setAttribute('disabled', '');
+      if (v.id == authId) {
+        document.getElementById("one-de").removeAttribute('disabled');
+        document.getElementById("turn-end").removeAttribute('disabled');
+      }
+    } else {
+      return true;
+    }
   });
 
   // ゲームリセット
