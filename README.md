@@ -9,12 +9,18 @@
 
 - デプロイ
   - EC2
-
-- DB
+  - RDB
   - firebase realtime database
-  - RDS
 
-# 開発環境
+- 仮想開発環境
+  - vagrant
+  - firebase realtime database
+
+- ローカル開発環境
+  - firebase local host
+  - firebase realtime database
+
+## 開発環境
 
 - バックエンド
   - JavaScript
