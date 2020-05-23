@@ -71,7 +71,17 @@ $(function() {
   $(document).on('click', '#start', function() {
     var userId = Number(document.getElementById('userId').getAttribute('data-userid'));
 
-    if (userCount == 3) {
+    if (userCount == 2) {
+      if (userId == 1) {
+        var ranPNum = 2;
+        var ranINum = 3;
+        var ranPlNum = 4;
+      } else if (userId == 2) {
+        var ranPNum = 3;
+        var ranINum = 2;
+        var ranPlNum = 4;
+      }
+    } else if (userCount == 3) {
       if (userId == 1) {
         var ranPNum = 2;
         var ranINum = 2;
@@ -349,5 +359,4 @@ $(function() {
     })
     database.ref(user).remove();
   });
-
 });
