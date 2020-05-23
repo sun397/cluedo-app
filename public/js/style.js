@@ -9,9 +9,9 @@ $(function() {
 
   // チェックリスト表示
   var radio = '<td><input type="radio"></td><td><input type="radio"></td><td><input type="radio"></td><td><input type="radio"></td>';
-  var personList = ['スライム', 'ヒト', 'エスターク', 'メタルキング'];
-  var itemList = ['剣', '斧', '弓', '棒'];
-  var placeList = ['富士山', '隅田川', '渋谷', '地獄'];
+  var personList = ['スライム', 'ヒト', 'エスターク', 'メタルキング', 'マリオ', 'ルイージ'];
+  var itemList = ['剣', '斧', '弓', '棒', 'ラケット', 'フライパン'];
+  var placeList = ['富士山', '隅田川', '渋谷', '地獄', '城下町', '別荘', '寝室', 'ハワイ', 'スラム街'];
   database.ref(user).on("value", function(data) {
     let list = '';
     data.forEach(function(childData) {
@@ -19,14 +19,16 @@ $(function() {
     });
     $('#person-list').html('<th>アイテム\\ユーザー</th>'+list);
   });
-  for (i=1;i<5;i++) {
+  for (i=1;i<7;i++) {
     $('#person-list'+i).html('<th>'+personList[i-1]+'</th>'+radio);
     $('#item-list'+i).html('<th>'+itemList[i-1]+'</th>'+radio);
-    $('#place-list'+i).html('<th>'+placeList[i-1]+'</th>'+radio);
     $('#person-reason').append('<option value="'+i+'" name="person">'+personList[i-1]+'</option>');
     $('#item-reason').append('<option value="'+i+'" name="item">'+itemList[i-1]+'</option>');
-    $('#place-reason').append('<option value="'+i+'" name="place">'+placeList[i-1]+'</option>');
   };
+  for (i=1;i<10;i++) {
+    $('#place-list'+i).html('<th>'+placeList[i-1]+'</th>'+radio);
+    $('#place-reason').append('<option value="'+i+'" name="place">'+placeList[i-1]+'</option>');
+  }
 
   // ユーザー参加処理
   const id = document.getElementById("p-id");
@@ -64,14 +66,17 @@ $(function() {
 
   // ゲーム開始時手札配布処理
   $(document).on('click', '#start', function() {
-    var randamNum = Math.floor(Math.random() * ((4 + 1) - 1)) + 1;
+    var randamNum = Math.floor(Math.random() * ((6 + 1) - 1)) + 1;
     var count = 0;
     var userId = Number(document.getElementById('userId').getAttribute('data-userid'));
     database.ref(item).orderByChild("completed").equalTo(true).on("value", function(data) {
-      let str = "";
-      while(count<1) {
+      var obNum = Object.keys(data.val()).length;
+      if (obNum == 1) {
+        count++;
+      }
+      while(count<2) {
         data.forEach(function(childData) {
-          if (count>=1) {
+          if (count>=2) {
             return true;
           }
           const v = childData.val();
@@ -80,18 +85,21 @@ $(function() {
             count++;
             database.ref(item).child(childData.key).update({completed: false, userId: userId});
           }
-          randamNum = Math.floor(Math.random() * ((4 + 1) - 1)) + 1;
+          randamNum = Math.floor(Math.random() * ((6 + 1) - 1)) + 1;
         })
       }
     });
 
-    var randamNu = Math.floor(Math.random() * ((4 + 1) - 1)) + 1;
+    var randamNu = Math.floor(Math.random() * ((6+ 1) - 1)) + 1;
     var coun = 0;
     database.ref(person).orderByChild("completed").equalTo(true).on("value", function(data) {
-      let str = "";
-      while(coun<1) {
+      var obNum = Object.keys(data.val()).length;
+      if (obNum == 1) {
+        coun++;
+      }
+      while(coun<2) {
         data.forEach(function(childData) {
-          if (coun>=1) {
+          if (coun>=2) {
             return true;
           }
           const v = childData.val();
@@ -100,18 +108,21 @@ $(function() {
             coun++;
             database.ref(person).child(childData.key).update({completed: false, userId: userId});
           }
-          randamNu = Math.floor(Math.random() * ((4 + 1) - 1)) + 1;
+          randamNu = Math.floor(Math.random() * ((6 + 1) - 1)) + 1;
         })
       }
     });
 
-    var randamN = Math.floor(Math.random() * ((4 + 1) - 1)) + 1;
+    var randamN = Math.floor(Math.random() * ((9 + 1) - 1)) + 1;
     var cou = 0;
     database.ref(place).orderByChild("completed").equalTo(true).on("value", function(data) {
-      let str = "";
-      while(cou<1) {
+      var obNum = Object.keys(data.val()).length;
+      if (obNum == 1) {
+        cou++;
+      }
+      while(cou<3) {
         data.forEach(function(childData) {
-          if (cou>=1) {
+          if (cou>=3) {
             return true;
           }
           const v = childData.val();
@@ -120,7 +131,7 @@ $(function() {
             cou++;
             database.ref(place).child(childData.key).update({completed: false, userId: userId});
           }
-          randamN = Math.floor(Math.random() * ((4 + 1) - 1)) + 1;
+          randamN = Math.floor(Math.random() * ((9 + 1) - 1)) + 1;
         })
       }
     });
