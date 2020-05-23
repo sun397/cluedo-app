@@ -169,6 +169,15 @@ $(function() {
     mutations.forEach((mutation) => {
       console.log(mutation.target);
       $('#result p').eq(1).remove();
+      var userName = $('#result p').text().substr(0, 6);
+      console.log(userName);
+      database.ref(change).once("value", function(data) {
+        data.forEach(function(childData) {
+          database.ref(change).child(childData.key).update({
+            userName: userName,
+          });
+        });
+      });
     });
   });
   const config = {
@@ -222,6 +231,7 @@ $(function() {
     v = data.val();
     $('#mysteryPlayer').html('プレイヤー'+v.id+'の推理');
     $('#mysteryItem').html(v.name+'・'+v.item+'・'+v.place);
+    $('#mysteryTargetPlayer').html(v.userName+'が持っています');
   });
 
   // ターン終了処理
@@ -286,6 +296,7 @@ $(function() {
           name: 'test',
           item: 'test',
           place: 'test',
+          userName: 'test',
         });
       });
     })
