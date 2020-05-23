@@ -56,39 +56,54 @@ $(function() {
     $('#p-'+v.id).html('<span>'+v.name+'</span>');
     database.ref(user).on("value", function(data) {
       data.forEach(function(childData) {
-        if (childData.id <= 4) {
+        if (childData.id <= userCount) {
           $('#p-'+childData.id).html(childData.name);
         }
       });
     });
     console.log(userCount);
+    if (userCount >= 2) {
+      document.getElementById("start").removeAttribute('disabled');
+    }
   });
 
   // ゲーム開始時手札配布処理
   $(document).on('click', '#start', function() {
-    var randamNum = Math.floor(Math.random() * ((6 + 1) - 1)) + 1;
-    var count = 0;
     var userId = Number(document.getElementById('userId').getAttribute('data-userid'));
-    database.ref(item).orderByChild("completed").equalTo(true).on("value", function(data) {
-      var obNum = Object.keys(data.val()).length;
-      if (obNum == 1) {
-        count++;
+
+    if (userCount == 3) {
+      if (userId == 1) {
+        var ranPNum = 2;
+        var ranINum = 2;
+        var ranPlNum = 2;
+      } else if (userId == 2) {
+        var ranPNum = 1;
+        var ranINum = 2;
+        var ranPlNum = 3;
+      } else if (userId == 3) {
+        var ranPNum = 2;
+        var ranINum = 1;
+        var ranPlNum = 3;
       }
-      while(count<2) {
-        data.forEach(function(childData) {
-          if (count>=2) {
-            return true;
-          }
-          const v = childData.val();
-          if (v.id == randamNum) {
-            $('#item-card').append('<div class="id">武器:'+v.name+'</div>');
-            count++;
-            database.ref(item).child(childData.key).update({completed: false, userId: userId});
-          }
-          randamNum = Math.floor(Math.random() * ((6 + 1) - 1)) + 1;
-        })
+    } else if (userCount == 4) {
+      if (userId == 1) {
+        var ranPNum = 2;
+        var ranINum = 1;
+        var ranPlNum = 2;
+      } else if (userId == 2) {
+        var ranPNum = 1;
+        var ranINum = 1;
+        var ranPlNum = 2;
+      } else if (userId == 3) {
+        var ranPNum = 1;
+        var ranINum = 1;
+        var ranPlNum = 2;
+      } else if (userId == 4) {
+        var ranPNum = 1;
+        var ranINum = 2;
+        var ranPlNum = 2;
       }
-    });
+    }
 
     var randamNu = Math.floor(Math.random() * ((6+ 1) - 1)) + 1;
     var coun = 0;
@@ -97,9 +112,9 @@ $(function() {
       if (obNum == 1) {
         coun++;
       }
-      while(coun<2) {
+      while(coun<ranPNum) {
         data.forEach(function(childData) {
-          if (coun>=2) {
+          if (coun>=ranPNum) {
             return true;
           }
           const v = childData.val();
@@ -113,6 +128,29 @@ $(function() {
       }
     });
 
+    var randamNum = Math.floor(Math.random() * ((6 + 1) - 1)) + 1;
+    var count = 0;
+    database.ref(item).orderByChild("completed").equalTo(true).on("value", function(data) {
+      var obNum = Object.keys(data.val()).length;
+      if (obNum == 1) {
+        count++;
+      }
+      while(count<ranINum) {
+        data.forEach(function(childData) {
+          if (count>=ranINum) {
+            return true;
+          }
+          const v = childData.val();
+          if (v.id == randamNum) {
+            $('#item-card').append('<div class="id">武器:'+v.name+'</div>');
+            count++;
+            database.ref(item).child(childData.key).update({completed: false, userId: userId});
+          }
+          randamNum = Math.floor(Math.random() * ((6 + 1) - 1)) + 1;
+        })
+      }
+    });
+
     var randamN = Math.floor(Math.random() * ((9 + 1) - 1)) + 1;
     var cou = 0;
     database.ref(place).orderByChild("completed").equalTo(true).on("value", function(data) {
@@ -120,9 +158,9 @@ $(function() {
       if (obNum == 1) {
         cou++;
       }
-      while(cou<3) {
+      while(cou<ranPlNum) {
         data.forEach(function(childData) {
-          if (cou>=3) {
+          if (cou>=ranPlNum) {
             return true;
           }
           const v = childData.val();
@@ -162,7 +200,7 @@ $(function() {
     });
 
     i++;
-    if (i + 1 == 5) {
+    if (i + 1 == userCount+2) {
       i = 1;
     }
     var deferred = mysteryCheck(i, personId, itemId, placeId);
@@ -173,6 +211,7 @@ $(function() {
         console.log(33);
       });
     });
+
     document.getElementById("one-de").setAttribute('disabled', '');
   });
   var target = document.getElementById('result');
@@ -198,11 +237,10 @@ $(function() {
   };
   observer.observe(target, config);
 
-
+  // 推理チェック関数
   function mysteryCheck(i, personId, itemId, placeId) {
     var deferred = new $.Deferred();
     userId = document.getElementById('userId').getAttribute('data-userid');
-    console.log(i);
     database.ref(person).orderByChild("userId").equalTo(i).once("value", function(data) {
       data.forEach(function(childData) {
         v = childData.val();
@@ -235,8 +273,6 @@ $(function() {
     return deferred;
   };
 
-
-
   // 推理表示
   database.ref(change).on("child_changed", function (data) {
     v = data.val();
@@ -249,7 +285,7 @@ $(function() {
   $(document).on('click', '#turn-end', function() {
     var userId = document.getElementById('userId').getAttribute('data-userid');
     var nextUser = userId++;
-    if (userId == 4) {
+    if (userId == userCount+1) {
       userId = 1;
     }
     database.ref(user).once("value", function(data) {
