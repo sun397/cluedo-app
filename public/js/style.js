@@ -5,6 +5,7 @@ $(function() {
   let item = "item_room";
   let person = "person_room";
   let place = "place_room";
+  let change = "change_room";
 
   // チェックリスト表示
   var radio = '<td><input type="radio"></td><td><input type="radio"></td><td><input type="radio"></td><td><input type="radio"></td>';
@@ -128,61 +129,45 @@ $(function() {
 
   // 推理処理
   var count = 0;
+  var counter = 0;
   $(document).on('click', '#one-de', function() {
     $('#result').html('');
     var userId = document.getElementById('userId').getAttribute('data-userid');
     var i = Number(userId);
     count = 0;
+    counter = 0;
+    var personId = Number($('#person-reason option:selected').val());
+    var itemId = Number($('#item-reason option:selected').val());
+    var placeId = Number($('#place-reason option:selected').val());
+    database.ref(change).once("value", function(data) {
+      data.forEach(function(childData) {
+        database.ref(change).child(childData.key).update({
+          id: i,
+          name: personList[personId-1],
+          item: itemList[itemId-1],
+          place: placeList[placeId-1],
+        });
+      });
+    });
 
-    while (count < 2) {
-      if (i + 1 == 5) {
-        i = 1;
-      }
-      if (i == userId) {
-        i++;
-        continue;
-      }
-      var personId = Number($('#person-reason option:selected').val());
-      database.ref(person).orderByChild("userId").equalTo(i).once("value", function(data) {
-        data.forEach(function(childData) {
-          v = childData.val();
-          if (v.id == personId) {
-            $('#result').append('<p id="result-reason">プレイヤー'+v.userId+v.name+'</p>');
-            return true;
-          }
-        });
-      });
-      var itemId = Number($('#item-reason option:selected').val());
-      database.ref(item).orderByChild("userId").equalTo(i).once("value", function(data) {
-        data.forEach(function(childData) {
-          v = childData.val();
-          if (v.id == itemId) {
-            $('#result').append('<p id="result-reason">プレイヤー'+v.userId+v.name+'</p>');
-            return true;
-          }
-        });
-      });
-      var placeId = Number($('#place-reason option:selected').val());
-      database.ref(place).orderByChild("userId").equalTo(i).once("value", function(data) {
-        data.forEach(function(childData) {
-          v = childData.val();
-          if (v.id == placeId) {
-            $('#result').append('<p id="result-reason">プレイヤー'+v.userId+v.name+'</p>');
-            return true;
-          }
-        });
-      });
-      i++;
-      count++;
+    i++;
+    if (i + 1 == 5) {
+      i = 1;
     }
+    var deferred = mysteryCheck(i, personId, itemId, placeId);
+    deferred.done(function() {
+      i++;
+      deferred = mysteryCheck(i, personId, itemId, placeId);
+      deferred.done(function() {
+        console.log(33);
+      });
+    });
     document.getElementById("one-de").setAttribute('disabled', '');
   });
   var target = document.getElementById('result');
   let observer = new MutationObserver((mutations) => {
     mutations.forEach((mutation) => {
-      // var count = target.childElementCount;
       console.log(mutation.target);
-      count = 2;
       $('#result p').eq(1).remove();
     });
   });
@@ -192,6 +177,52 @@ $(function() {
     subtree: true
   };
   observer.observe(target, config);
+
+
+  function mysteryCheck(i, personId, itemId, placeId) {
+    var deferred = new $.Deferred();
+    userId = document.getElementById('userId').getAttribute('data-userid');
+    console.log(i);
+    database.ref(person).orderByChild("userId").equalTo(i).once("value", function(data) {
+      data.forEach(function(childData) {
+        v = childData.val();
+        if (v.id == personId && counter == 0) {
+          $('#result').append('<p id="result-reason">プレイヤー'+v.userId+v.name+'</p>');
+          counter++;
+        }
+      });
+    });
+    database.ref(item).orderByChild("userId").equalTo(i).once("value", function(data) {
+      data.forEach(function(childData) {
+        v = childData.val();
+        if (v.id == itemId && counter == 0) {
+          $('#result').append('<p id="result-reason">プレイヤー'+v.userId+v.name+'</p>');
+          counter++;
+        }
+      });
+    });
+    database.ref(place).orderByChild("userId").equalTo(i).once("value", function(data) {
+      data.forEach(function(childData) {
+        v = childData.val();
+        if (v.id == placeId && counter == 0) {
+          $('#result').append('<p id="result-reason">プレイヤー'+v.userId+v.name+'</p>');
+          counter++;
+        }
+      });
+    }).then(function () {
+      deferred.resolve();
+    });
+    return deferred;
+  };
+
+
+
+  // 推理表示
+  database.ref(change).on("child_changed", function (data) {
+    v = data.val();
+    $('#mysteryPlayer').html('プレイヤー'+v.id+'の推理');
+    $('#mysteryItem').html(v.name+'・'+v.item+'・'+v.place);
+  });
 
   // ターン終了処理
   $(document).on('click', '#turn-end', function() {
@@ -217,7 +248,6 @@ $(function() {
   database.ref(user).on("child_changed", function (data) {
     var v = data.val();
     var authId = document.getElementById('userId').getAttribute('data-userid');
-
     if (v.completed == true) {
       $('.is_color').removeClass('color');
       $('#p-'+v.id).addClass('color');
@@ -249,6 +279,16 @@ $(function() {
         database.ref(place).child(childData.key).update({completed: true, userId: 0});
       });
     });
+    database.ref(change).on("value", function(data) {
+      data.forEach(function(childData) {
+        database.ref(change).child(childData.key).update({
+          id: 0,
+          name: 'test',
+          item: 'test',
+          place: 'test',
+        });
+      });
+    })
     database.ref(user).remove();
   });
 

@@ -33,6 +33,24 @@ $(function() {
 
 
 
+  // let change = "change_room";
+  // const idd = document.getElementById("idd");
+  // const names = document.getElementById("names");
+  // const items = document.getElementById("items");
+  // const places = document.getElementById("places");
+
+  // $('#it').on('click', function() {
+  //     var now = new Date();
+  //     database.ref(change).push({
+  //       id: idd.value,
+  //       name: names.value,
+  //       item: items.value,
+  //       place: places.value,
+  //       completed: true,
+  //       date: now.getFullYear() + '年' + now.getMonth()+1 + '月' + now.getDate() + '日' + now.getHours() + '時' + now.getMinutes() + '分',
+  //     });
+  //   });
+
   // 人補充
   // let item = "person_room";
   // const idd = document.getElementById("idd");
