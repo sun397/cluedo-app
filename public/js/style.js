@@ -6,6 +6,8 @@ $(function() {
   let person = "person_room";
   let place = "place_room";
   let change = "change_room";
+  let check = "check_room";
+  // let allCard = "card_room";
 
   // チェックリスト表示
   var radio = '<td><input type="radio"></td><td><input type="radio"></td><td><input type="radio"></td><td><input type="radio"></td>';
@@ -61,7 +63,6 @@ $(function() {
         }
       });
     });
-    console.log(userCount);
     if (userCount >= 2) {
       document.getElementById("start").removeAttribute('disabled');
     }
@@ -70,7 +71,6 @@ $(function() {
   // ゲーム開始時手札配布処理
   $(document).on('click', '#start', function() {
     var userId = Number(document.getElementById('userId').getAttribute('data-userid'));
-
     if (userCount == 2) {
       if (userId == 1) {
         var ranPNum = 2;
@@ -114,7 +114,6 @@ $(function() {
         var ranPlNum = 2;
       }
     }
-
     var randamNu = Math.floor(Math.random() * ((6+ 1) - 1)) + 1;
     var coun = 0;
     database.ref(person).orderByChild("completed").equalTo(true).on("value", function(data) {
@@ -210,34 +209,50 @@ $(function() {
     });
 
     i++;
-    if (i + 1 == userCount+2) {
+    if (i == userCount + 1) {
       i = 1;
     }
     var deferred = mysteryCheck(i, personId, itemId, placeId);
     deferred.done(function() {
-      i++;
-      deferred = mysteryCheck(i, personId, itemId, placeId);
-      deferred.done(function() {
-        console.log(33);
-      });
+      if ($('#result p').text().length) {
+        return true;
+      } else {
+        i++;
+        if (i == userCount + 1) {
+          i = 1;
+        }
+        deferred = mysteryCheck(i, personId, itemId, placeId);
+        deferred.done(function() {
+          if ($('#result p').text().length) {
+            return true;
+          } else {
+            i++;
+            if (i == userCount + 1) {
+              i = 1;
+            }
+            deferred = mysteryCheck(i, personId, itemId, placeId);
+            deferred.done(function() {
+              console.log(33);
+            });
+          }
+        });
+      }
     });
-
     document.getElementById("one-de").setAttribute('disabled', '');
   });
   var target = document.getElementById('result');
   let observer = new MutationObserver((mutations) => {
     mutations.forEach((mutation) => {
       console.log(mutation.target);
-      $('#result p').eq(1).remove();
-      var userName = $('#result p').text().substr(0, 6);
-      console.log(userName);
-      database.ref(change).once("value", function(data) {
-        data.forEach(function(childData) {
-          database.ref(change).child(childData.key).update({
-            userName: userName,
-          });
-        });
-      });
+      // $('#result p').eq(1).remove();
+      // var userName = $('#result p').text().substr(0, 6);
+      // database.ref(change).once("value", function(data) {
+      //   data.forEach(function(childData) {
+      //     database.ref(change).child(childData.key).update({
+      //       userName: userName,
+      //     });
+      //   });
+      // });
     });
   });
   const config = {
@@ -255,8 +270,16 @@ $(function() {
       data.forEach(function(childData) {
         v = childData.val();
         if (v.id == personId && counter == 0) {
-          $('#result').append('<p id="result-reason">プレイヤー'+v.userId+v.name+'</p>');
-          counter++;
+          $('#result').html('<p id="result-reason">プレイヤー'+v.userId+'が持っています</p>');
+          database.ref(check).orderByChild("id").equalTo(1).once("value", function(data) {
+            var li = Object.keys(data.val())[0];
+            database.ref(check).child(li).update({
+              name: personId,
+              userId: v.userId,
+              sendUser: userId
+            });
+          });
+          // counter++;
         }
       });
     });
@@ -264,8 +287,16 @@ $(function() {
       data.forEach(function(childData) {
         v = childData.val();
         if (v.id == itemId && counter == 0) {
-          $('#result').append('<p id="result-reason">プレイヤー'+v.userId+v.name+'</p>');
-          counter++;
+          $('#result').html('<p id="result-reason">プレイヤー'+v.userId+'が持っています</p>');
+          database.ref(check).orderByChild("id").equalTo(2).once("value", function(data) {
+            var li = Object.keys(data.val())[0];
+            database.ref(check).child(li).update({
+              name: itemId,
+              userId: v.userId,
+              sendUser: userId
+            });
+          });
+          // counter++;
         }
       });
     });
@@ -273,8 +304,16 @@ $(function() {
       data.forEach(function(childData) {
         v = childData.val();
         if (v.id == placeId && counter == 0) {
-          $('#result').append('<p id="result-reason">プレイヤー'+v.userId+v.name+'</p>');
-          counter++;
+          $('#result').html('<p id="result-reason">プレイヤー'+v.userId+'が持っています</p>');
+          database.ref(check).orderByChild("id").equalTo(3).once("value", function(data) {
+            var li = Object.keys(data.val())[0];
+            database.ref(check).child(li).update({
+              name: placeId,
+              userId: v.userId,
+              sendUser: userId
+            });
+          });
+          // counter++;
         }
       });
     }).then(function () {
@@ -286,9 +325,51 @@ $(function() {
   // 推理表示
   database.ref(change).on("child_changed", function (data) {
     v = data.val();
-    $('#mysteryPlayer').html('プレイヤー'+v.id+'の推理');
+    $('#mysteryPlayer').html('プレイヤー'+v.id+'の推理').attr('value', v.id);
     $('#mysteryItem').html(v.name+'・'+v.item+'・'+v.place);
-    $('#mysteryTargetPlayer').html(v.userName+'が持っています');
+  });
+
+  // プレイヤーの選んだ、持っているカード表示
+  var list = '';
+  database.ref(check).on("child_changed", function (data) {
+    userId = document.getElementById('userId').getAttribute('data-userid');
+    v = data.val();
+    list = '';
+    if (v['userId'] == userId) {
+      if (v['attribute'] == 'person') {
+        list += '<div class="show-data-person" id="showCard" data-show="'+v.sendUser+'" data-show-attr="person">'+personList[v.name-1]+'</div>';
+        $('#showp').html(list);
+      } else if (v['attribute'] == 'item') {
+        list += '<div class="show-data-item" id="showCard" data-show="'+v.sendUser+'" data-show-attr="item">'+itemList[v.name-1]+'</div>';
+        $('#showi').html(list);
+      } else if (v['attribute'] == 'place') {
+        list += '<div class="show-data-place" id="showCard" data-show="'+v.sendUser+'" data-show-attr="place">'+placeList[v.name-1]+'</div>';
+        $('#showpl').html(list);
+      }
+    }
+  });
+  // プレイヤーのカード選択処理
+  $(document).on('click', '#showCard', function () {
+    userId = document.getElementById('userId').getAttribute('data-userid');
+    var attr = $(this).data()['showAttr'];
+    database.ref(check).orderByChild("attribute").equalTo(attr).once("value", function(data) {
+      var li = Object.keys(data.val())[0];
+      database.ref(check).child(li).update({completed: true});
+    });
+  });
+  // 選択されたカードを取得
+  database.ref(check).on("child_changed", function (data) {
+    userId = document.getElementById('userId').getAttribute('data-userid');
+    v = data.val();
+    if (v['sendUser'] == userId && v['completed'] == true) {
+      if (v['attribute'] == 'person') {
+        $('#result').html('<p id="result-reason">'+personList[v.name-1]+'</p>');
+      } else if (v['attribute'] == 'item') {
+        $('#result').html('<p id="result-reason">'+itemList[v.name-1]+'</p>');
+      } else if (v['attribute'] == 'place') {
+        $('#result').html('<p id="result-reason">'+placeList[v.name-1]+'</p>');
+      }
+    }
   });
 
   // ターン終了処理
@@ -309,6 +390,16 @@ $(function() {
       });
     });
     document.getElementById("turn-end").setAttribute('disabled', '');
+    database.ref(check).once("value", function(data) {
+      data.forEach(function(childData) {
+        database.ref(check).child(childData.key).update({
+          name: 0,
+          userId: 0,
+          sendUser: 0,
+          completed: false
+        });
+      });
+    });
   });
 
   // 自分のターンチェック処理
@@ -327,6 +418,13 @@ $(function() {
     } else {
       return true;
     }
+    $('#result-reason').html('');
+    $('#mysteryItem').html('');
+    $('#showp').html('');
+    $('#showi').html('');
+    $('#showpl').html('');
+    $('#mysteryPlayer').html('');
+    $('#mysteryItem').html('');
   });
 
   // ゲームリセット
@@ -354,6 +452,16 @@ $(function() {
           item: 'test',
           place: 'test',
           userName: 'test',
+        });
+      });
+    })
+    database.ref(check).on("value", function(data) {
+      data.forEach(function(childData) {
+        database.ref(check).child(childData.key).update({
+          name: 0,
+          userId: 0,
+          sendUser: 0,
+          completed: false
         });
       });
     })

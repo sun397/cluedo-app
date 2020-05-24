@@ -9,8 +9,9 @@ $(function() {
   const output = document.getElementById("output");
 
   //送信処理
-  send.addEventListener('click', function() {
+  $('#send').on('click', function() {
     var now = new Date();
+    console.log(1);
     database.ref(room).push({
         name: name.value,
         message: message.value,
@@ -32,12 +33,12 @@ $(function() {
   });
 
 
-
   // let change = "change_room";
   // const idd = document.getElementById("idd");
   // const names = document.getElementById("names");
   // const items = document.getElementById("items");
   // const places = document.getElementById("places");
+  // const attr = document.getElementById("attr");
 
   // $('#it').on('click', function() {
   //     var now = new Date();
@@ -50,6 +51,31 @@ $(function() {
   //       date: now.getFullYear() + '年' + now.getMonth()+1 + '月' + now.getDate() + '日' + now.getHours() + '時' + now.getMinutes() + '分',
   //     });
   //   });
+
+  // let check = "check_room";
+  // $('#it').on('click', function() {
+  //   var now = new Date();
+  //   database.ref(check).push({
+  //     id: idd.value,
+  //     name: items.value,
+  //     attribute: attr.value,
+  //     userId: 0,
+  //     date: now.getFullYear() + '年' + now.getMonth()+1 + '月' + now.getDate() + '日' + now.getHours() + '時' + now.getMinutes() + '分',
+  //   });
+  // });
+
+  // let allCards = "card_room";
+  // $('#it').on('click', function() {
+  //   var now = new Date();
+  //   database.ref(allCards).push({
+  //     id: idd.value,
+  //     name: items.value,
+  //     attribute: attr.value,
+  //     userId: 0,
+  //     completed: true,
+  //     date: now.getFullYear() + '年' + now.getMonth()+1 + '月' + now.getDate() + '日' + now.getHours() + '時' + now.getMinutes() + '分',
+  //   });
+  // });
 
   // 人補充
   // let item = "person_room";
