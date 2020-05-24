@@ -9,15 +9,23 @@ body {
     sans-serif;
 }
 main {
-  background-image: url('https://www.linustock.com/images/uploads/2019/01/1547445472-2.png');
-  background-color:rgba(255,255,255,0.8);
+  /* background-image: url('https://www.linustock.com/images/uploads/2019/01/1547445472-2.png');
   background-blend-mode:lighten;
-  background-size: cover;
+  background-size: cover; */
+  background-color: #1B2838;
 }
 section {
   margin: 0;
   padding: 0;
-  color: #000000;
+  color: #FFFFFF;
+}
+input[disabled]{
+  background:#DCDCDC;
+  cursor:not-allowed; /* 禁止カーソル */
+}
+button[disabled]{
+  background:#DCDCDC;
+  cursor:not-allowed; /* 禁止カーソル */
 }
 h1 {
   text-align: center;
@@ -46,21 +54,69 @@ textarea {
 .fix {
   position: fixed;
   top: 0;
-  background-color: #000000;
-  color: #ffffff;
+  background-color: #171A21;
+  color: #CBCCCD;
+  z-index: 10;
 }
 .join {
-  padding: 20px 100px;
+  padding: 10px 100px;
+}
+.join-list {
+  display: inline-block;
+}
+.join button {
+  display: inline-block;
+  padding: 0.5em 1em;
+  text-decoration: none;
+  background: #4785A9;
+  color: #FFF;
+  border-bottom: solid 4px #627295;
+  border-radius: 3px;
+}
+.join button:active {
+  -webkit-transform: translateY(4px);
+  background: #6BCBFB;
+  transform: translateY(4px);/*下に動く*/
+  box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.2);/*影を小さく*/
+  border-bottom: none;
 }
 .join-form {
   float: left;
 }
+.join-form-list {
+  margin-top: 10px;
+}
+.join-form-list:first-child {
+  margin-top: 0;
+}
+.join-now-turn-p {
+  text-align: center;
+  vertical-align: middle;
+  font-size: 23px;
+}
 .join-name {
   float: right;
+  font-size: 20px;
+}
+
+/* ルール */
+.rule {
+  background-color: #0E141D;
+  color: #CBCCCD;
+  padding: 20px;
+  margin-top: 120px;
+  position: absolute;
+  top: 30px;
+  left: 30px;
+  width: 15%;
+  font-size: 15px;
 }
 
 /* チェックリスト */
 .check {
+  background-color: #0E141D;
+  color: #CBCCCD;
+  padding: 20px;
   margin-top: 120px;
   position: absolute;
   top: 30px;
@@ -75,7 +131,7 @@ textarea {
 
 /* 手札 */
 .hand {
-  padding-top: 150px;
+  padding-top: 130px;
 }
 .hand-card-block {
   display: inline-block;
@@ -85,6 +141,14 @@ textarea {
 /* 推理 */
 .mystery {
   padding: 30px 0;
+}
+.mystery-result-content-select p {
+  display: inline-block;
+  width: 80px;
+}
+.mystery-result-content-select p:hover {
+  cursor: pointer;
+  color: #4785A9;
 }
 
 /* リセットボタン */
@@ -99,5 +163,6 @@ textarea {
 
 
 .color {
-  color: #00008b;
+  color: #4D90B5;
+  font-size: 20px;
 }

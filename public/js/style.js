@@ -197,16 +197,6 @@ $(function() {
     var personId = Number($('#person-reason option:selected').val());
     var itemId = Number($('#item-reason option:selected').val());
     var placeId = Number($('#place-reason option:selected').val());
-    database.ref(change).once("value", function(data) {
-      data.forEach(function(childData) {
-        database.ref(change).child(childData.key).update({
-          id: i,
-          name: personList[personId-1],
-          item: itemList[itemId-1],
-          place: placeList[placeId-1],
-        });
-      });
-    });
 
     i++;
     if (i == userCount + 1) {
@@ -237,6 +227,18 @@ $(function() {
           }
         });
       }
+    }).then(function(){
+      database.ref(change).once("value", function(data) {
+        data.forEach(function(childData) {
+          database.ref(change).child(childData.key).update({
+            id: Number(userId),
+            name: personList[personId-1],
+            item: itemList[itemId-1],
+            place: placeList[placeId-1],
+            hitUser: i,
+          });
+        });
+      });
     });
     document.getElementById("one-de").setAttribute('disabled', '');
   });
@@ -244,15 +246,6 @@ $(function() {
   let observer = new MutationObserver((mutations) => {
     mutations.forEach((mutation) => {
       console.log(mutation.target);
-      // $('#result p').eq(1).remove();
-      // var userName = $('#result p').text().substr(0, 6);
-      // database.ref(change).once("value", function(data) {
-      //   data.forEach(function(childData) {
-      //     database.ref(change).child(childData.key).update({
-      //       userName: userName,
-      //     });
-      //   });
-      // });
     });
   });
   const config = {
@@ -325,6 +318,7 @@ $(function() {
   // 推理表示
   database.ref(change).on("child_changed", function (data) {
     v = data.val();
+    $('#result').html('<p id="result-reason">プレイヤー'+v.hitUser+'が持っています</p>');
     $('#mysteryPlayer').html('プレイヤー'+v.id+'の推理').attr('value', v.id);
     $('#mysteryItem').html(v.name+'・'+v.item+'・'+v.place);
   });
@@ -336,6 +330,7 @@ $(function() {
     v = data.val();
     list = '';
     if (v['userId'] == userId) {
+      $('.mystery-result-content-select').fadeIn();
       if (v['attribute'] == 'person') {
         list += '<div class="show-data-person" id="showCard" data-show="'+v.sendUser+'" data-show-attr="person">'+personList[v.name-1]+'</div>';
         $('#showp').html(list);
@@ -356,6 +351,7 @@ $(function() {
       var li = Object.keys(data.val())[0];
       database.ref(check).child(li).update({completed: true});
     });
+    $('.mystery-result-content-select').fadeOut();
   });
   // 選択されたカードを取得
   database.ref(check).on("child_changed", function (data) {
@@ -409,6 +405,7 @@ $(function() {
     if (v.completed == true) {
       $('.is_color').removeClass('color');
       $('#p-'+v.id).addClass('color');
+      $('.join-now-turn-p').html('<p>プレイヤー'+v.id+'のターン</p>')
       document.getElementById("one-de").setAttribute('disabled', '');
       document.getElementById("turn-end").setAttribute('disabled', '');
       if (v.id == authId) {
@@ -452,6 +449,7 @@ $(function() {
           item: 'test',
           place: 'test',
           userName: 'test',
+          hitUser: 0
         });
       });
     })

@@ -65,33 +65,50 @@
 
     <header class="inner fix">
       <div class="clearfix join">
-        <div class="join-form">
-          <label for="">id</label>
-          <select name="p-id" id="p-id">
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-          </select>
-          <br>
-          <label for="">名前</label>
-          <input type="text" id="user-name">
-          <button id="submit-go">参加</button>
-          <br>
-          <button id="start" disabled>GAME START</button>
-          <br>
-          <button id="turn-end">ターン終了</button>
-        </div>
-        <div class="join-name">
-          <p>プレイヤー名</p>
-          <div id="user-name-place">
-            <p>guest</p>
+        <div class="join-list join-form">
+          <div class="join-form-list">
+            <label for="">id</label>
+            <select name="p-id" id="p-id">
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+            </select>
           </div>
+          <div class="join-form-list">
+            <label for="">名前</label>
+            <input type="text" id="user-name" placeholder="名前を入力">
+            <button id="submit-go">参加</button>
+          </div>
+          <div class="join-form-list">
+            <button id="start" disabled>GAME START</button>
+            <button id="turn-end">ターン終了</button>
+          </div>
+        </div>
+        <div class="join-list  join-now-turn-p">
+        </div>
+        <div class="join-list  join-name">
+          <p>プレイヤー名</p>
+          <div id="user-name-place"><p>guest</p></div>
         </div>
       </div>
     </header>
 
     <main>
+
+      <section>
+        <div class="rule">
+          <div class="rule-content">
+            <p>ゲームの進め方</p>
+            <p>①画面左上の入力欄から参加</p>
+            <p>②プレイヤーが2人以上集まったら「GAME START」をクリック（右の参加プレイヤーで確認）</p>
+            <p>③自分のターンに推理をして「決定」をクリック</p>
+            <p>④左上の「ターン終了」をクリック</p>
+            <p>⑤他プレイヤーの推理で自分のカードが当たった場合、プレイヤーに見せるカードをクリック</p>
+            <p><a href="http://kakepuro.com/cluedo/" style="color:#ffffff;">ルール参考URL</a></p>
+          </div>
+        </div>
+      </section>
 
       <section>
         <div class="check">
@@ -186,13 +203,21 @@
           </div>
           <div class="mystery-result">
             <h2>結果</h2>
-            <p contentEditable id="result"></p>
-            <h2 contentEditable id="mysteryPlayer" value="0"></h2>
-            <p contentEditable id="mysteryItem"></p>
-            <p contentEditable id="mysteryTargetPlayer"></p>
-            <p contentEditable id="showp"></p>
-            <p contentEditable id="showi"></p>
-            <p contentEditable id="showpl"></p>
+            <div class="mystery-result-content">
+              <p contentEditable id="result" class="mystery-result-true"></p>
+              <div class="mystery-result-content-other">
+                <h2 contentEditable id="mysteryPlayer" value="0"></h2>
+                <p contentEditable id="mysteryItem"></p>
+              </div>
+              <div class="mystery-result-content-">
+                <p contentEditable id="mysteryTargetPlayer"></p>
+              </div>
+              <div class="mystery-result-content-select" style="display: none;">
+                <p contentEditable id="showp"></p>
+                <p contentEditable id="showi"></p>
+                <p contentEditable id="showpl"></p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
