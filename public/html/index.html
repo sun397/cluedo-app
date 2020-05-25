@@ -59,6 +59,7 @@
       </script>
       <link rel="stylesheet" href="/css/style.css">
       <script src="/js/style.js"></script>
+      <script src="/js/firebase.js"></script>
       <script src="/js/mente.js"></script>
   </head>
   <body>
@@ -85,7 +86,25 @@
             <button id="turn-end">ターン終了</button>
           </div>
         </div>
+        <div class="join-player">
+          <div class="join-player-list">
+            1：<span id="p-1" class="is_color"></span>
+          </div>
+          <div class="join-player-list">
+            2：<span id="p-2" class="is_color"></span>
+          </div>
+          <div class="join-player-list">
+            3：<span id="p-3" class="is_color"></span>
+          </div>
+          <div class="join-player-list">
+            4：<span id="p-4" class="is_color"></span>
+          </div>
+        </div>
         <div class="join-list  join-now-turn-p">
+          <p>プレイヤー1のターン</p>
+        </div>
+        <div class="join-list">
+          <button class="join-list-button">ルール確認</button>
         </div>
         <div class="join-list  join-name">
           <p>プレイヤー名</p>
@@ -97,7 +116,7 @@
     <main>
 
       <section>
-        <div class="rule">
+        <div class="rule" style="display: none;">
           <div class="rule-content">
             <p>ゲームの進め方</p>
             <p>①画面左上の入力欄から参加</p>
@@ -112,23 +131,22 @@
 
       <section>
         <div class="check">
-          <div class="check-player">
-            <h2>参加プレイヤー</h2>
-            <div class="hand-card-block">
+          <!-- <div class="check-player">
+            <div class="player-list">
               1：<span id="p-1" class="is_color"></span>
             </div>
-            <div class="hand-card-block">
+            <div class="player-list">
               2：<span id="p-2" class="is_color"></span>
             </div>
-            <div class="hand-card-block">
+            <div class="player-list">
               3：<span id="p-3" class="is_color"></span>
             </div>
-            <div class="hand-card-block">
+            <div class="player-list">
               4：<span id="p-4" class="is_color"></span>
             </div>
-          </div>
+          </div> -->
           <div class="check-list">
-            <h1>チェックリスト</h1>
+            <p>チェックリスト</p>
             <table border="1" id="check-list">
               <tr id="person-list"></tr>
 
@@ -162,35 +180,24 @@
 
       <section>
         <div class="hand">
-          <h1>手札</h1>
+          <h1 class="hand-title">手札</h1>
+
           <div id="hand-card">
-            <div class="hand-card-block" id="person-card"></div>
-            <div class="hand-card-block" id="item-card"></div>
-            <div class="hand-card-block" id="place-card"></div>
+            <div class="hand-card">
+              <div class="hand-card-block" id="person-card"></div>
+              <div id="char" class="hand-card-img-content"></div>
+            </div>
+            <div  class="hand-card">
+              <div class="hand-card-block" id="item-card"></div>
+              <div id="item-img" class="hand-card-img-content"></div>
+            </div>
+            <div  class="hand-card">
+              <div class="hand-card-block" id="place-card"></div>
+              <div id="place-img" class="hand-card-img-content"></div>
+            </div>
           </div>
         </div>
       </section>
-
-      <!-- <section>
-        <input type="text" id="idd">
-        <input type="text" id="items">
-        <button id="it">GO</button>
-      </section> -->
-
-      <!-- <section>
-        <input type="text" id="idd">
-        <input type="text" id="items">
-        <input type="text" id="attr">
-        <button id="it">GO</button>
-      </section> -->
-
-      <!-- <section>
-        <input type="text" id="idd">
-        <input type="text" id="names">
-        <input type="text" id="items">
-        <input type="text" id="places">
-        <button id="it">GO</button>
-      </section> -->
 
       <section>
         <div class="mystery">
@@ -199,20 +206,19 @@
             <select name="person" id="person-reason"></select>
             <select name="item" id="item-reason"></select>
             <select name="place" id="place-reason"></select>
-            <button id="one-de" disabled>決定</button>
+            <button id="one-de" class="mystery-form-button" disabled>決定</button>
           </div>
           <div class="mystery-result">
             <h2>結果</h2>
             <div class="mystery-result-content">
-              <p contentEditable id="result" class="mystery-result-true"></p>
-              <div class="mystery-result-content-other">
+              <div contentEditable id="result" class="mystery-result-true" style="display: none;"></div>
+              <div class="mystery-result-content-other" style="display: none;">
                 <h2 contentEditable id="mysteryPlayer" value="0"></h2>
                 <p contentEditable id="mysteryItem"></p>
-              </div>
-              <div class="mystery-result-content-">
-                <p contentEditable id="mysteryTargetPlayer"></p>
+                <div class="mystery-result-content-other-img"></div>
               </div>
               <div class="mystery-result-content-select" style="display: none;">
+                <div><span>プレイヤーに見せるカードを選んでください</span></div>
                 <p contentEditable id="showp"></p>
                 <p contentEditable id="showi"></p>
                 <p contentEditable id="showpl"></p>
@@ -232,7 +238,7 @@
       <section>
         <div class="chat">
           <h1>リアルタイムチャット</h1>
-          <div id="name">
+          <div id="test-name">
             GUEST
           </div>
           <br>
@@ -249,7 +255,7 @@
     </main>
     <footer>
       <div>
-        <p>Oga-Inc</p>
+        <p>Sun-Inc</p>
       </div>
     </footer>
   </body>

@@ -3,22 +3,18 @@ $(function() {
   var database = firebase.database();
 
   let room = "chat_room";
-  const send = document.getElementById("send");
-  const name = document.getElementById("name");
   const message = document.getElementById("message");
   const output = document.getElementById("output");
 
   //送信処理
-  $('#send').on('click', function() {
+  $(document).on('click', '#send', function() {
     var now = new Date();
-    console.log(1);
     database.ref(room).push({
-        name: name.value,
+        name: $('#name').val(),
         message: message.value,
         date: now.getFullYear() + '年' + now.getMonth()+1 + '月' + now.getDate() + '日' + now.getHours() + '時' + now.getMinutes() + '分'
     });
     message.value="";
-    name.value="";
   });
 
   //受信処理
@@ -121,5 +117,26 @@ $(function() {
   //     date: now.getFullYear() + '年' + now.getMonth()+1 + '月' + now.getDate() + '日' + now.getHours() + '時' + now.getMinutes() + '分',
   //   });
   // });
+
+//   <!-- <section>
+//   <input type="text" id="idd">
+//   <input type="text" id="items">
+//   <button id="it">GO</button>
+// </section> -->
+
+// <!-- <section>
+//   <input type="text" id="idd">
+//   <input type="text" id="items">
+//   <input type="text" id="attr">
+//   <button id="it">GO</button>
+// </section> -->
+
+// <!-- <section>
+//   <input type="text" id="idd">
+//   <input type="text" id="names">
+//   <input type="text" id="items">
+//   <input type="text" id="places">
+//   <button id="it">GO</button>
+// </section> -->
 
 });

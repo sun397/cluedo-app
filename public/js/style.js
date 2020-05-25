@@ -1,5 +1,9 @@
 $(function() {
 
+  $('.join-list-button').on('click', function() {
+    $('.rule').toggle();
+  });
+
   var database = firebase.database();
   let user = "user_room";
   let item = "item_room";
@@ -7,7 +11,7 @@ $(function() {
   let place = "place_room";
   let change = "change_room";
   let check = "check_room";
-  // let allCard = "card_room";
+  let chat = "chat_room";
 
   // チェックリスト表示
   var radio = '<td><input type="radio"></td><td><input type="radio"></td><td><input type="radio"></td><td><input type="radio"></td>';
@@ -46,7 +50,7 @@ $(function() {
     $('#user-name-place').html('<p id="userId" data-userid="'+Number(id.value)+'">'+userName.value+'</p>');
     document.getElementById("submit-go").setAttribute('disabled', '');
     document.getElementById("one-de").removeAttribute('disabled');
-    $('#name').html(userName.value+'<input type="hidden" id="name" value="'+userName.value+'">');
+    $('#test-name').html(userName.value+'<input type="hidden" id="name" value="'+userName.value+'">');
     userName.value="";
   });
 
@@ -128,7 +132,8 @@ $(function() {
           }
           const v = childData.val();
           if (v.id == randamNu) {
-            $('#person-card').append('<div class="id">人:'+v.name+'</div>');
+            $('#person-card').append('<div class="id hand-card-block-text">'+v.name+'</div>');
+            $('#char').append('<img src="/img/person/'+v.id+'.png" alt=""></img>');
             coun++;
             database.ref(person).child(childData.key).update({completed: false, userId: userId});
           }
@@ -151,7 +156,8 @@ $(function() {
           }
           const v = childData.val();
           if (v.id == randamNum) {
-            $('#item-card').append('<div class="id">武器:'+v.name+'</div>');
+            $('#item-card').append('<div class="id hand-card-block-text">'+v.name+'</div>');
+            $('#item-img').append('<img src="/img/item/'+v.id+'.png" alt=""></img>');
             count++;
             database.ref(item).child(childData.key).update({completed: false, userId: userId});
           }
@@ -174,7 +180,8 @@ $(function() {
           }
           const v = childData.val();
           if (v.id == randamN) {
-            $('#place-card').append('<div class="id">場所:'+v.name+'</div>');
+            $('#place-card').append('<div class="id hand-card-block-text">'+v.name+'</div>');
+            $('#place-img').append('<img src="/img/place/'+v.id+'.png" alt=""></img>');
             cou++;
             database.ref(place).child(childData.key).update({completed: false, userId: userId});
           }
@@ -189,7 +196,7 @@ $(function() {
   var count = 0;
   var counter = 0;
   $(document).on('click', '#one-de', function() {
-    $('#result').html('');
+    $('#result').fadeIn();
     var userId = document.getElementById('userId').getAttribute('data-userid');
     var i = Number(userId);
     count = 0;
@@ -228,13 +235,16 @@ $(function() {
         });
       }
     }).then(function(){
+      if (i == userId) {
+        $('#result').html('<p id="result-reason">正解！！！</p>');
+      }
       database.ref(change).once("value", function(data) {
         data.forEach(function(childData) {
           database.ref(change).child(childData.key).update({
             id: Number(userId),
-            name: personList[personId-1],
-            item: itemList[itemId-1],
-            place: placeList[placeId-1],
+            name: personId,
+            item: itemId,
+            place: placeId,
             hitUser: i,
           });
         });
@@ -317,10 +327,15 @@ $(function() {
 
   // 推理表示
   database.ref(change).on("child_changed", function (data) {
+    $('#result').fadeIn();
+    $('.mystery-result-content-other').fadeIn();
     v = data.val();
     $('#result').html('<p id="result-reason">プレイヤー'+v.hitUser+'が持っています</p>');
     $('#mysteryPlayer').html('プレイヤー'+v.id+'の推理').attr('value', v.id);
-    $('#mysteryItem').html(v.name+'・'+v.item+'・'+v.place);
+    var name = personList[v.name-1]+'・'+itemList[v.item-1]+'・'+placeList[v.place-1];
+    var img = '<img src="/img/person/'+v.name+'.png" alt=""></img><img src="/img/item/'+v.item+'.png" alt=""></img><img src="/img/place/'+v.place+'.png" alt=""></img>';
+    $('#mysteryItem').html(name);
+    $('.mystery-result-content-other-img').html(img);
   });
 
   // プレイヤーの選んだ、持っているカード表示
@@ -415,13 +430,8 @@ $(function() {
     } else {
       return true;
     }
-    $('#result-reason').html('');
-    $('#mysteryItem').html('');
-    $('#showp').html('');
-    $('#showi').html('');
-    $('#showpl').html('');
-    $('#mysteryPlayer').html('');
-    $('#mysteryItem').html('');
+    $('#result').fadeOut();
+    $('.mystery-result-content-other').fadeOut();
   });
 
   // ゲームリセット
@@ -445,9 +455,9 @@ $(function() {
       data.forEach(function(childData) {
         database.ref(change).child(childData.key).update({
           id: 0,
-          name: 'test',
-          item: 'test',
-          place: 'test',
+          name: 0,
+          item: 0,
+          place: 0,
           userName: 'test',
           hitUser: 0
         });
@@ -464,5 +474,6 @@ $(function() {
       });
     })
     database.ref(user).remove();
+    database.ref(chat).remove();
   });
 });

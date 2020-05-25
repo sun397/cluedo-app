@@ -7,12 +7,13 @@ body {
     "Hiragino Sans",
     Meiryo,
     sans-serif;
+  background-color: #1B2838;
 }
 main {
   /* background-image: url('https://www.linustock.com/images/uploads/2019/01/1547445472-2.png');
   background-blend-mode:lighten;
   background-size: cover; */
-  background-color: #1B2838;
+  /* background-color: #1B2838; */
 }
 section {
   margin: 0;
@@ -89,6 +90,15 @@ textarea {
 .join-form-list:first-child {
   margin-top: 0;
 }
+.join-player {
+  text-align: center;
+  vertical-align: middle;
+  font-size: 15px;
+}
+.join-player-list {
+  display: inline-block;
+  margin-right: 10px;
+}
 .join-now-turn-p {
   text-align: center;
   vertical-align: middle;
@@ -110,6 +120,7 @@ textarea {
   left: 30px;
   width: 15%;
   font-size: 15px;
+  z-index: 10;
 }
 
 /* チェックリスト */
@@ -117,31 +128,78 @@ textarea {
   background-color: #0E141D;
   color: #CBCCCD;
   padding: 20px;
-  margin-top: 120px;
+  margin-top: 130px;
   position: absolute;
   top: 30px;
   right: 30px;
 }
-.check-player {
-
-}
-.check-list {
-
-}
 
 /* 手札 */
 .hand {
-  padding-top: 130px;
+  padding-top: 110px;
+  position: absolute;
+  top: 30px;
+  left: 10px;
+  width: 25%;
+}
+.hand-title {
+  text-align: left;
+}
+.hand-card {
+  margin-bottom: 10px;
+  font-size: 0;
+}
+.hand-card:last-child {
+  margin-bottom: 0;
 }
 .hand-card-block {
+  text-align: left;
+}
+.hand-card-block-text {
   display: inline-block;
-  margin-left: 30px;
+  margin-right: 10px;
+  font-size: 15px;
+}
+.hand-card-block-text:last-child {
+  margin-right: 0;
+}
+.hand-card-img-content {
+  text-align: left;
+}
+.hand-card-img-content img {
+  max-width: 70px;
+  height: 70px;
+  margin-right: 10px;
+}
+.hand-card-img-content img:last-child {
+  margin-right: 0;
 }
 
 /* 推理 */
 .mystery {
-  padding: 30px 0;
+  padding-top: 130px;
+  padding-bottom: 30px;
 }
+.mystery-form {
+
+}
+.mystery-form-button {
+  display: inline-block;
+  padding: 0.5em 1em;
+  text-decoration: none;
+  background: #4785A9;
+  color: #FFF;
+  border-bottom: solid 4px #627295;
+  border-radius: 3px;
+}
+.mystery-form-button:active {
+  -webkit-transform: translateY(4px);
+  background: #6BCBFB;
+  transform: translateY(4px);/*下に動く*/
+  box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.2);/*影を小さく*/
+  border-bottom: none;
+}
+
 .mystery-result-content-select p {
   display: inline-block;
   width: 80px;
@@ -149,6 +207,11 @@ textarea {
 .mystery-result-content-select p:hover {
   cursor: pointer;
   color: #4785A9;
+}
+.mystery-result-content-other-img img {
+  display: inline-block;
+  width: 200px;
+  height: 200px;
 }
 
 /* リセットボタン */
