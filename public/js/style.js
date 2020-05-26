@@ -274,7 +274,7 @@ $(function() {
         v = childData.val();
         if (v.id == personId && counter == 0) {
           $('#result').html('<p id="result-reason">プレイヤー'+v.userId+'が持っています</p>');
-          database.ref(check).orderByChild("id").equalTo(1).once("value", function(data) {
+          database.ref(check).orderByChild("id").equalTo(1).on("value", function(data) {
             var li = Object.keys(data.val())[0];
             database.ref(check).child(li).update({
               name: personId,
@@ -291,7 +291,7 @@ $(function() {
         v = childData.val();
         if (v.id == itemId && counter == 0) {
           $('#result').html('<p id="result-reason">プレイヤー'+v.userId+'が持っています</p>');
-          database.ref(check).orderByChild("id").equalTo(2).once("value", function(data) {
+          database.ref(check).orderByChild("id").equalTo(2).on("value", function(data) {
             var li = Object.keys(data.val())[0];
             database.ref(check).child(li).update({
               name: itemId,
@@ -308,7 +308,7 @@ $(function() {
         v = childData.val();
         if (v.id == placeId && counter == 0) {
           $('#result').html('<p id="result-reason">プレイヤー'+v.userId+'が持っています</p>');
-          database.ref(check).orderByChild("id").equalTo(3).once("value", function(data) {
+          database.ref(check).orderByChild("id").equalTo(3).on("value", function(data) {
             var li = Object.keys(data.val())[0];
             database.ref(check).child(li).update({
               name: placeId,
