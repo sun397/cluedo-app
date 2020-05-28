@@ -32,6 +32,9 @@
  - SCSS
  - JavaScript
 
+- 対応ブラウザ
+  - Google Chrome
+
 ## アプリ概要
 
 - Cluedoというゲームをfirebaseで作成してみた

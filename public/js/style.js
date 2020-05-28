@@ -212,31 +212,45 @@ $(function() {
     var deferred = mysteryCheck(i, personId, itemId, placeId);
     deferred.done(function() {
       if ($('#result p').text().length) {
+        console.log(i);
+        console.log($('#result p').text());
         return true;
       } else {
         i++;
         if (i == userCount + 1) {
           i = 1;
         }
+        if (i == userId) {
+          return true;
+        }
+        console.log(i);
         deferred = mysteryCheck(i, personId, itemId, placeId);
         deferred.done(function() {
           if ($('#result p').text().length) {
+            console.log(i);
+            console.log($('#result p').text());
             return true;
           } else {
             i++;
             if (i == userCount + 1) {
               i = 1;
             }
+            if (i == userId) {
+              return true;
+            }
+            console.log(i);
             deferred = mysteryCheck(i, personId, itemId, placeId);
             deferred.done(function() {
+              console.log(i);
               console.log(33);
             });
           }
         });
       }
     }).then(function(){
+      console.log(i);
       if (i == userId) {
-        $('#result').html('<p id="result-reason">正解！！！</p>');
+        $('#result').html('<p id="result-reason">他プレイヤーは持っていいません。</p>');
       }
       database.ref(change).once("value", function(data) {
         data.forEach(function(childData) {
@@ -269,12 +283,14 @@ $(function() {
   function mysteryCheck(i, personId, itemId, placeId) {
     var deferred = new $.Deferred();
     userId = document.getElementById('userId').getAttribute('data-userid');
-    database.ref(person).orderByChild("userId").equalTo(i).once("value", function(data) {
+    database.ref(person).orderByChild("userId").equalTo(i).on("value", function(data) {
       data.forEach(function(childData) {
         v = childData.val();
+        console.log(v, personId, v.id);
         if (v.id == personId && counter == 0) {
+          console.log(v, personId, v.id);
           $('#result').html('<p id="result-reason">プレイヤー'+v.userId+'が持っています</p>');
-          database.ref(check).orderByChild("id").equalTo(1).on("value", function(data) {
+          database.ref(check).orderByChild("id").equalTo(1).once("value", function(data) {
             var li = Object.keys(data.val())[0];
             database.ref(check).child(li).update({
               name: personId,
@@ -286,12 +302,13 @@ $(function() {
         }
       });
     });
-    database.ref(item).orderByChild("userId").equalTo(i).once("value", function(data) {
+    database.ref(item).orderByChild("userId").equalTo(i).on("value", function(data) {
       data.forEach(function(childData) {
         v = childData.val();
         if (v.id == itemId && counter == 0) {
+          console.log(v, itemId, v.id);
           $('#result').html('<p id="result-reason">プレイヤー'+v.userId+'が持っています</p>');
-          database.ref(check).orderByChild("id").equalTo(2).on("value", function(data) {
+          database.ref(check).orderByChild("id").equalTo(2).once("value", function(data) {
             var li = Object.keys(data.val())[0];
             database.ref(check).child(li).update({
               name: itemId,
@@ -307,8 +324,9 @@ $(function() {
       data.forEach(function(childData) {
         v = childData.val();
         if (v.id == placeId && counter == 0) {
+          console.log(v, placeId, v.id);
           $('#result').html('<p id="result-reason">プレイヤー'+v.userId+'が持っています</p>');
-          database.ref(check).orderByChild("id").equalTo(3).on("value", function(data) {
+          database.ref(check).orderByChild("id").equalTo(3).once("value", function(data) {
             var li = Object.keys(data.val())[0];
             database.ref(check).child(li).update({
               name: placeId,
@@ -330,7 +348,13 @@ $(function() {
     $('#result').fadeIn();
     $('.mystery-result-content-other').fadeIn();
     v = data.val();
-    $('#result').html('<p id="result-reason">プレイヤー'+v.hitUser+'が持っています</p>');
+    if (v.hitUser == v.id) {
+      $('#result').html('<p id="result-reason">他プレイヤーは持っていいません。</p>');
+    } else if (v.hitUser == 0) {
+      return true;
+    } else {
+      $('#result').html('<p id="result-reason">プレイヤー'+v.hitUser+'が持っています</p>');
+    }
     $('#mysteryPlayer').html('プレイヤー'+v.id+'の推理').attr('value', v.id);
     var name = personList[v.name-1]+'・'+itemList[v.item-1]+'・'+placeList[v.place-1];
     var img = '<img src="/img/person/'+v.name+'.png" alt=""></img><img src="/img/item/'+v.item+'.png" alt=""></img><img src="/img/place/'+v.place+'.png" alt=""></img>';
@@ -408,6 +432,17 @@ $(function() {
           userId: 0,
           sendUser: 0,
           completed: false
+        });
+      });
+    });
+    database.ref(change).once("value", function(data) {
+      data.forEach(function(childData) {
+        database.ref(check).child(childData.key).update({
+          hitUser: 0,
+          id: 0,
+          item: 0,
+          name: 0,
+          place: 0,
         });
       });
     });
