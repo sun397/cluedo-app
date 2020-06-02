@@ -195,15 +195,19 @@ $(function() {
   // 推理処理
   var count = 0;
   var counter = 0;
+  var personId;
+  var itemId;
+  var placeId;
   $(document).on('click', '#one-de', function() {
     $('#result').fadeIn();
+    $('#result').html('');
     var userId = document.getElementById('userId').getAttribute('data-userid');
     var i = Number(userId);
     count = 0;
     counter = 0;
-    var personId = Number($('#person-reason option:selected').val());
-    var itemId = Number($('#item-reason option:selected').val());
-    var placeId = Number($('#place-reason option:selected').val());
+    personId = Number($('#person-reason option:selected').val());
+    itemId = Number($('#item-reason option:selected').val());
+    placeId = Number($('#place-reason option:selected').val());
 
     i++;
     if (i == userCount + 1) {
@@ -220,49 +224,23 @@ $(function() {
         if (i == userCount + 1) {
           i = 1;
         }
-        if (i == userId) {
-          return true;
-        }
-        console.log(i);
         deferred = mysteryCheck(i, personId, itemId, placeId);
         deferred.done(function() {
           if ($('#result p').text().length) {
-            console.log(i);
-            console.log($('#result p').text());
             return true;
           } else {
             i++;
             if (i == userCount + 1) {
               i = 1;
             }
-            if (i == userId) {
-              return true;
-            }
-            console.log(i);
             deferred = mysteryCheck(i, personId, itemId, placeId);
             deferred.done(function() {
-              console.log(i);
-              console.log(33);
             });
           }
         });
       }
-    }).then(function(){
+    }).done(function(){
       console.log(i);
-      if (i == userId) {
-        $('#result').html('<p id="result-reason">他プレイヤーは持っていいません。</p>');
-      }
-      database.ref(change).once("value", function(data) {
-        data.forEach(function(childData) {
-          database.ref(change).child(childData.key).update({
-            id: Number(userId),
-            name: personId,
-            item: itemId,
-            place: placeId,
-            hitUser: i,
-          });
-        });
-      });
     });
     document.getElementById("one-de").setAttribute('disabled', '');
   });
@@ -286,9 +264,8 @@ $(function() {
     database.ref(person).orderByChild("userId").equalTo(i).on("value", function(data) {
       data.forEach(function(childData) {
         v = childData.val();
-        console.log(v, personId, v.id);
+        console.log(v);
         if (v.id == personId && counter == 0) {
-          console.log(v, personId, v.id);
           $('#result').html('<p id="result-reason">プレイヤー'+v.userId+'が持っています</p>');
           database.ref(check).orderByChild("id").equalTo(1).once("value", function(data) {
             var li = Object.keys(data.val())[0];
@@ -345,21 +322,28 @@ $(function() {
 
   // 推理表示
   database.ref(change).on("child_changed", function (data) {
-    $('#result').fadeIn();
-    $('.mystery-result-content-other').fadeIn();
     v = data.val();
-    if (v.hitUser == v.id) {
-      $('#result').html('<p id="result-reason">他プレイヤーは持っていいません。</p>');
-    } else if (v.hitUser == 0) {
-      return true;
-    } else {
+    if (v.completed === true) {
+      $('#result').fadeIn();
+      $('.mystery-result-content-other').fadeIn();
       $('#result').html('<p id="result-reason">プレイヤー'+v.hitUser+'が持っています</p>');
+
+      $('#mysteryPlayer').html('プレイヤー'+v.id+'の推理').attr('value', v.id);
+      var name = personList[v.name-1]+'・'+itemList[v.item-1]+'・'+placeList[v.place-1];
+      var img = '<img src="/img/person/'+v.name+'.png" alt=""></img><img src="/img/item/'+v.item+'.png" alt=""></img><img src="/img/place/'+v.place+'.png" alt=""></img>';
+      $('#mysteryItem').html(name);
+      $('.mystery-result-content-other-img').html(img);
+    } else if (v.endCompleted === true) {
+      $('#result').fadeIn();
+      $('.mystery-result-content-other').fadeIn();
+      $('#result').html('<p id="result-reason">他プレイヤーは持っていいません。</p>');
+
+      $('#mysteryPlayer').html('プレイヤー'+v.id+'の推理').attr('value', v.id);
+      var name = personList[v.name-1]+'・'+itemList[v.item-1]+'・'+placeList[v.place-1];
+      var img = '<img src="/img/person/'+v.name+'.png" alt=""></img><img src="/img/item/'+v.item+'.png" alt=""></img><img src="/img/place/'+v.place+'.png" alt=""></img>';
+      $('#mysteryItem').html(name);
+      $('.mystery-result-content-other-img').html(img);
     }
-    $('#mysteryPlayer').html('プレイヤー'+v.id+'の推理').attr('value', v.id);
-    var name = personList[v.name-1]+'・'+itemList[v.item-1]+'・'+placeList[v.place-1];
-    var img = '<img src="/img/person/'+v.name+'.png" alt=""></img><img src="/img/item/'+v.item+'.png" alt=""></img><img src="/img/place/'+v.place+'.png" alt=""></img>';
-    $('#mysteryItem').html(name);
-    $('.mystery-result-content-other-img').html(img);
   });
 
   // プレイヤーの選んだ、持っているカード表示
@@ -368,17 +352,51 @@ $(function() {
     userId = document.getElementById('userId').getAttribute('data-userid');
     v = data.val();
     list = '';
-    if (v['userId'] == userId) {
+    if (v['userId'] == userId && v['sendUser'] !== userId) {
       $('.mystery-result-content-select').fadeIn();
       if (v['attribute'] == 'person') {
+        $('#showp').html('');
         list += '<div class="show-data-person" id="showCard" data-show="'+v.sendUser+'" data-show-attr="person">'+personList[v.name-1]+'</div>';
         $('#showp').html(list);
       } else if (v['attribute'] == 'item') {
+        $('#showi').html('');
         list += '<div class="show-data-item" id="showCard" data-show="'+v.sendUser+'" data-show-attr="item">'+itemList[v.name-1]+'</div>';
         $('#showi').html(list);
       } else if (v['attribute'] == 'place') {
+        $('#showpl').html('');
         list += '<div class="show-data-place" id="showCard" data-show="'+v.sendUser+'" data-show-attr="place">'+placeList[v.name-1]+'</div>';
         $('#showpl').html(list);
+      }
+    }
+
+    console.log(v['sendUser'], v['userId']);
+    if (v['sendUser'] == userId) {
+      if (v['sendUser'] == v['userId']) {
+        database.ref(change).once("value", function(data) {
+          data.forEach(function(childData) {
+            database.ref(change).child(childData.key).update({
+              id: Number(userId),
+              name: personId,
+              item: itemId,
+              place: placeId,
+              hitUser: v.userId,
+              endCompleted: true,
+            });
+          });
+        });
+      } else {
+        database.ref(change).once("value", function(data) {
+          data.forEach(function(childData) {
+            database.ref(change).child(childData.key).update({
+              id: Number(userId),
+              name: personId,
+              item: itemId,
+              place: placeId,
+              hitUser: v.userId,
+              completed: true,
+            });
+          });
+        });
       }
     }
   });
@@ -431,25 +449,30 @@ $(function() {
           name: 0,
           userId: 0,
           sendUser: 0,
-          completed: false
+          completed: false,
         });
       });
     });
     database.ref(change).once("value", function(data) {
       data.forEach(function(childData) {
-        database.ref(check).child(childData.key).update({
-          hitUser: 0,
+        database.ref(change).child(childData.key).update({
           id: 0,
-          item: 0,
           name: 0,
+          item: 0,
           place: 0,
+          hitUser: 0,
+          completed: false,
+          endCompleted: false,
         });
       });
-    });
+    })
   });
 
   // 自分のターンチェック処理
   database.ref(user).on("child_changed", function (data) {
+    $('#showp').html('');
+    $('#showi').html('');
+    $('#showpl').html('');
     var v = data.val();
     var authId = document.getElementById('userId').getAttribute('data-userid');
     if (v.completed == true) {
@@ -493,11 +516,12 @@ $(function() {
           name: 0,
           item: 0,
           place: 0,
-          userName: 'test',
-          hitUser: 0
+          hitUser: 0,
+          completed: false,
+          endCompleted: false,
         });
       });
-    })
+    });
     database.ref(check).on("value", function(data) {
       data.forEach(function(childData) {
         database.ref(check).child(childData.key).update({
