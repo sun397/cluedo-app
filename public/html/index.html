@@ -104,7 +104,9 @@
           <p>プレイヤー1のターン</p>
         </div>
         <div class="join-list">
-          <button class="join-list-button">ルール確認</button>
+          <button class="join-list-button">Rule</button>
+          <button class="join-list-mystery">推理する</button>
+          <button id="reset">reset</button>
         </div>
         <div class="join-list  join-name">
           <p>プレイヤー名</p>
@@ -126,6 +128,16 @@
             <p>⑤他プレイヤーの推理で自分のカードが当たった場合、プレイヤーに見せるカードをクリック</p>
             <p><a href="http://kakepuro.com/cluedo/" style="color:#ffffff;">ルール参考URL</a></p>
           </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="mystery-result-form" style="display: none;">
+          <h2>推理</h2>
+          <!-- <select name="person" id="person-reason"></select> -->
+          <!-- <select name="item" id="item-reason"></select> -->
+          <!-- <select name="place" id="place-reason"></select> -->
+          <!-- <button id="one-de" class="mystery-form-button" disabled>決定</button> -->
         </div>
       </section>
 
@@ -229,21 +241,12 @@
       </section>
 
       <section>
-        <div class="reset">
-          <label for="">リセット</label>
-          <button id="reset">reset</button>
-        </div>
-      </section>
-
-      <section>
         <div class="chat">
           <h1>リアルタイムチャット</h1>
-          <div id="test-name">
-            GUEST
-          </div>
-          <br>
+          <div id="test-name"></div>
           <div>
-            Message<br><textarea id="message" row="10"></textarea><br>
+            <p>Message</p>
+            <textarea id="message" row="10"></textarea>
             <br>
             <button id="send">send</button>
           </div>

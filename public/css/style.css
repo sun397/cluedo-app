@@ -123,6 +123,19 @@ textarea {
   z-index: 10;
 }
 
+.mystery-result-form {
+  background-color: #0E141D;
+  color: #CBCCCD;
+  padding: 20px;
+  margin-top: 120px;
+  position: absolute;
+  top: 30px;
+  left: 30px;
+  width: 20%;
+  font-size: 15px;
+  z-index: 10;
+}
+
 /* チェックリスト */
 .check {
   background-color: #0E141D;
@@ -214,16 +227,10 @@ textarea {
   height: 200px;
 }
 
-/* リセットボタン */
-.reset {
-  padding: 30px 0;
-}
-
 /* チャット */
 .chat {
   padding: 30px 0;
 }
-
 
 .color {
   color: #4D90B5;
