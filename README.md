@@ -24,7 +24,7 @@
 
 - バックエンド
   - JavaScript
-  - PHP(予定)
+  - Laravelに移行するかも、、、？
 
 - フロント
  - HTML
