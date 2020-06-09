@@ -18,7 +18,7 @@
 
 - ローカル開発環境
   - firebase local host
-  - firebase realtime database
+  - php build server
 
 ## 開発環境
 
