@@ -32,6 +32,7 @@
  - CSS
  - SCSS
  - JavaScript
+ - webpack使いたい
 
 - 対応ブラウザ
   - Google Chrome
